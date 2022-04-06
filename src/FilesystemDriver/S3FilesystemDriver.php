@@ -43,6 +43,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
         private readonly string $bucketName,
         private readonly string $objectsKeyPrefix,
         private readonly string $assetsExtension,
+        private readonly string $assetsExtension1,
         private readonly string $hiddenAssetExtension,
     ) {
         $this->s3Client = new S3Client([
@@ -63,6 +64,11 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     public function getAssetsExtension(): string
     {
         return $this->assetsExtension;
+    }
+
+    public function getAssetsExtension1(): string
+    {
+        return $this->assetsExtension1;
     }
 
     public function getHiddenAssetExtension(): string
@@ -91,7 +97,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
 
     public function getAssetResponse(int $tokenId): Response
     {
-        $object = $this->getObject(self::ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension);
+        $object = $this->getObject(self::IMG_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension);
         $response = new Response(
             $object->contents,
             200,
@@ -107,6 +113,26 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
 
         return $response;
     }
+
+    public function getAssetResponse1(int $tokenId): Response
+    {
+        $object = $this->getObject(self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1);
+        $response = new Response(
+            $object->contents,
+            200,
+            [
+                'Content-Type' => $object->contentType,
+            ],
+        );
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_INLINE,
+            $tokenId.'.'.$this->assetsExtension1,
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
 
     /**
      * @inheritdoc
@@ -206,8 +232,10 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     public function storeExportedAsset(int $sourceTokenId, int $targetTokenId): void
     {
         $this->copyObject(
-            self::ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension,
-            self::EXPORTED_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
+            self::IMG_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension,
+            self::EXPORTED_IMG_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
+            self::GLB_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension1,
+            self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
     }
 

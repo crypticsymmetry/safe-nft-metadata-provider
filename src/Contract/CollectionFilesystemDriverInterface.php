@@ -28,7 +28,12 @@ interface CollectionFilesystemDriverInterface
     /**
      * @var string
      */
-    final public const ASSETS_PATH = '/assets';
+    final public const GLB_ASSETS_PATH = '/assets/3dfiles/';
+
+    /**
+     * @var string
+     */
+    final public const IMG_ASSETS_PATH = '/assets/Images/';
 
     /**
      * @var string
@@ -60,6 +65,18 @@ interface CollectionFilesystemDriverInterface
      */
     final public const EXPORTED_ASSETS_PATH = '/exported/assets';
 
+    /**
+     * @var string
+     */
+    final public const EXPORTED_GLB_ASSETS_PATH = '/exported/assets/3dfiles';
+
+    public function getAssetsExtension1(): string;
+
+    /**
+     * @var string
+     */
+    final public const EXPORTED_IMG_ASSETS_PATH = '/exported/assets/Images';
+
     public function getAssetsExtension(): string;
 
     public function getHiddenAssetExtension(): string;
@@ -70,6 +87,8 @@ interface CollectionFilesystemDriverInterface
     public function getMetadata(int $tokenId): array;
 
     public function getAssetResponse(int $tokenId): Response;
+
+    public function getAssetResponse1(int $tokenId): Response;
 
     /**
      * @return array<string, mixed>

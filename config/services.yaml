@@ -9,6 +9,7 @@ parameters:
     app.collection_website: '%env(COLLECTION_WEBSITE)%'
     app.collection_max_supply: '%env(int:COLLECTION_MAX_SUPPLY)%'
     app.collection_assets_extension: '%env(COLLECTION_ASSETS_EXTENSION)%'
+    app.collection_assets_extension1: '%env(COLLECTION_ASSETS_EXTENSION1)%'
     app.collection_hidden_asset_extension: '%env(COLLECTION_HIDDEN_ASSET_EXTENSION)%'
 
 services:
@@ -70,6 +71,7 @@ services:
         arguments:
             - '%env(resolve:LOCAL_FS_DRIVER_COLLECTION_PATH)%'
             - '%app.collection_assets_extension%'
+            - '%app.collection_assets_extension1%'
             - '%app.collection_hidden_asset_extension%'
 
     file_system_driver.s3:
@@ -82,6 +84,7 @@ services:
             - '%env(resolve:S3_FS_DRIVER_BUCKET_NAME)%'
             - '%env(resolve:S3_FS_DRIVER_OBJECTS_KEY_PREFIX)%'
             - '%app.collection_assets_extension%'
+            - '%app.collection_assets_extension1%'
             - '%app.collection_hidden_asset_extension%'
 
     # Total supply providers

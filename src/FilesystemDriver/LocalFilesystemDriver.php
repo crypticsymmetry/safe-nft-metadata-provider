@@ -29,6 +29,7 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
     public function __construct(
         private readonly string $localCollectionPath,
         private readonly string $assetsExtension,
+        private readonly string $assetsExtension1,
         private readonly string $hiddenAssetExtension,
     ) {
     }
@@ -36,6 +37,11 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
     public function getAssetsExtension(): string
     {
         return $this->assetsExtension;
+    }
+
+    public function getAssetsExtension1(): string
+    {
+        return $this->assetsExtension1;
     }
 
     public function getHiddenAssetExtension(): string
@@ -63,11 +69,24 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
     public function getAssetResponse(int $tokenId): Response
     {
         $binaryFileResponse = new BinaryFileResponse(
-            $this->localCollectionPath.self::ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension,
+            $this->localCollectionPath.self::IMG_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension,
         );
         $binaryFileResponse->setContentDisposition(
             HeaderUtils::DISPOSITION_INLINE,
             $tokenId.'.'.$this->assetsExtension,
+        );
+
+        return $binaryFileResponse;
+    }
+
+    public function getAssetResponse1(int $tokenId): Response
+    {
+        $binaryFileResponse = new BinaryFileResponse(
+            $this->localCollectionPath.self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1,
+        );
+        $binaryFileResponse->setContentDisposition(
+            HeaderUtils::DISPOSITION_INLINE,
+            $tokenId.'.'.$this->assetsExtension1,
         );
 
         return $binaryFileResponse;
@@ -168,8 +187,10 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
     public function storeExportedAsset(int $sourceTokenId, int $targetTokenId): void
     {
         FileSystem::copy(
-            $this->localCollectionPath.self::ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension,
-            $this->localCollectionPath.self::EXPORTED_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
+            $this->localCollectionPath.self::IMG_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension,
+            $this->localCollectionPath.self::EXPORTED_IMG_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
+            $this->localCollectionPath.self::GLB_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension1,
+            $this->localCollectionPath.self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
     }
 }

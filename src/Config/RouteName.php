@@ -23,7 +23,12 @@ class RouteName
     /**
      * @var string
      */
-    final public const GET_ASSET = 'get_asset';
+    final public const GET_IMG_ASSET = 'get_img_asset';
+
+    /**
+     * @var string
+     */
+    final public const GET_GLB_ASSET = 'get_glb_asset';
 
     /**
      * @var string

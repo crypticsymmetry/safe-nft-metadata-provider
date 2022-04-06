@@ -22,8 +22,15 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Marco Lipparini <developer@liarco.net>
  */
 #[Route(
-    '/asset/{tokenId}.{_format}',
-    name: RouteName::GET_ASSET,
+    '/asset/Images/{tokenId}.{_format}',
+    name: RouteName::GET_IMG_ASSET,
+    defaults: [
+        '_format' => null,
+    ],
+)]
+#[Route(
+    '/asset/3dfiles/{tokenId}.{_format}',
+    name: RouteName::GET_GLB_ASSET,
     defaults: [
         '_format' => null,
     ],
@@ -38,6 +45,7 @@ final class AssetController extends AbstractNftController
 
         return $this->collectionManager
             ->getAssetResponse($tokenId)
+            ->getAssetResponse1($tokenId)
             ->setPublic()
             ->setMaxAge($this->getDefaultCacheExpiration())
         ;

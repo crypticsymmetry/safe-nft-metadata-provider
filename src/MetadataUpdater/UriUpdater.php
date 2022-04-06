@@ -20,8 +20,9 @@ use App\Contract\MetadataUpdaterInterface;
  */
 final class UriUpdater implements MetadataUpdaterInterface
 {
-    public function updateMetadata(array &$metadata, int $tokenId, string $assetUri): void
+    public function updateMetadata(array &$metadata, int $tokenId, string $assetUri, string $assetUri1): void
     {
         $metadata['image'] = $assetUri;
+        $metadata['animation_url'] = $assetUri1;
     }
 }

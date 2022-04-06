@@ -46,6 +46,11 @@ class ExportMetadataCommand extends Command
      */
     private const URI_PREFIX = 'uri-prefix';
 
+    /**
+     * @var string
+     */
+    private const URI_PREFIX1 = 'uri-prefix1';
+
     public function __construct(
         private readonly CollectionManager $collectionManager,
         string $name = null,
@@ -59,7 +64,12 @@ class ExportMetadataCommand extends Command
             ->addArgument(
                 self::URI_PREFIX,
                 InputArgument::REQUIRED,
-                'The URI prefix where the exported assets have been uploaded to',
+                'The URI prefix where the exported IMG assets have been uploaded to',
+            )
+            ->addArgument(
+                self::URI_PREFIX1,
+                InputArgument::REQUIRED,
+                'The URI prefix where the exported GLB assets have been uploaded to',
             )
         ;
     }
@@ -90,6 +100,44 @@ class ExportMetadataCommand extends Command
 
         foreach (range(1, $this->collectionManager->getMaxTokenId()) as $tokenId) {
             $this->collectionManager->storeExportedMetadata($tokenId, trim($uriPrefix, '/'));
+            gc_collect_cycles();
+
+            $symfonyStyle->progressAdvance();
+        }
+
+        $symfonyStyle->progressFinish();
+
+        $symfonyStyle->success('Metadata exported successfully!');
+
+        return Command::SUCCESS;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $symfonyStyle = new SymfonyStyle($input, $output);
+        $uriPrefix1 = $input->getArgument(self::URI_PREFIX1);
+
+        if (! is_string($uriPrefix1) || strlen($uriPrefix1) <= 0) {
+            throw new RuntimeException('Invalid GLB URI prefix.');
+        }
+
+        if (! $symfonyStyle->confirm(
+            "I'm about to delete the exported metadata directory and its content. Are you sure?",
+            false,
+        )) {
+            $symfonyStyle->warning('Aborting...');
+
+            return Command::SUCCESS;
+        }
+
+        $symfonyStyle->info('Deleting old data...');
+        $this->collectionManager->clearExportedMetadata();
+
+        $symfonyStyle->info('Exporting new data...');
+        $symfonyStyle->progressStart($this->collectionManager->getMaxTokenId());
+
+        foreach (range(1, $this->collectionManager->getMaxTokenId()) as $tokenId) {
+            $this->collectionManager->storeExportedMetadata($tokenId, trim($uriPrefix1, '/'));
             gc_collect_cycles();
 
             $symfonyStyle->progressAdvance();
