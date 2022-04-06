@@ -209,6 +209,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     public function storeNewShuffleMapping(array $newShuffleMapping): void
     {
         $this->putObject(self::MAPPING_PATH, Json::encode($newShuffleMapping));
+        $this->putObject1(self::MAPPING_PATH, Json::encode($newShuffleMapping));
     }
 
     public function clearExportedMetadata(): void
@@ -227,6 +228,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     public function storeExportedMetadata(int $tokenId, array $metadata): void
     {
         $this->putObject(self::EXPORTED_METADATA_PATH.'/'.$tokenId.'.json', Json::encode($metadata, Json::PRETTY));
+        $this->putObject1(self::EXPORTED_METADATA_PATH.'/'.$tokenId.'.json', Json::encode($metadata, Json::PRETTY));
     }
 
     public function storeExportedAsset(int $sourceTokenId, int $targetTokenId): void
@@ -244,6 +246,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
             self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
     }
+
     private function getObject(string $relativePath): FileObject
     {
         $result = $this->s3Client->getObject($this->generateArgs($relativePath));
@@ -262,9 +265,9 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
         return new FileObject($contentType, $body->getContents());
     }
 
-    private function getObject1(string $relativePath): FileObject
+    private function getObject1(string $relativePath): FileObject1
     {
-        $result = $this->s3Client->getObject1($this->generateArgs($relativePath));
+        $result = $this->s3Client->getObject1($this->generateArgs1($relativePath));
 
         $body = $result['Body'];
         $contentType = $result['ContentType'];
@@ -277,12 +280,21 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
             throw new LogicException('Unexpected "ContentType" type, it should be a string.');
         }
 
-        return new FileObject($contentType, $body->getContents());
+        return new FileObject1($contentType, $body->getContents());
     }
 
     private function putObject(string $relativePath, string $contents): void
     {
         $args = $this->generateArgs($relativePath);
+
+        $args['Body'] = $contents;
+
+        $this->s3Client->putObject($args);
+    }
+
+    private function putObject1(string $relativePath, string $contents): void
+    {
+        $args = $this->generateArgs1($relativePath);
 
         $args['Body'] = $contents;
 
@@ -300,9 +312,9 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
 
     private function copyObject1(string $sourceRelativePath, string $targetRelativePath): void
     {
-        $args = $this->generateArgs($targetRelativePath);
+        $args = $this->generateArgs1($targetRelativePath);
 
-        $args['CopySource'] = $this->bucketName.'/'.$this->generateAbsolutePath($sourceRelativePath);
+        $args['CopySource'] = $this->bucketName.'/'.$this->generateAbsolutePath1($sourceRelativePath);
 
         $this->s3Client->copyObject1($args);
     }
@@ -319,6 +331,24 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     }
 
     private function generateAbsolutePath(string $relativePath): string
+    {
+        $keyPrefix = empty($this->objectsKeyPrefix) ? '' : trim($this->objectsKeyPrefix, '/').'/';
+
+        return trim($keyPrefix.trim($relativePath, '/'), '/');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function generateArgs1(string $relativePath): array
+    {
+        return [
+            'Bucket' => $this->bucketName,
+            'Key' => $this->generateAbsolutePath1($relativePath),
+        ];
+    }
+
+    private function generateAbsolutePath1(string $relativePath): string
     {
         $keyPrefix = empty($this->objectsKeyPrefix) ? '' : trim($this->objectsKeyPrefix, '/').'/';
 
