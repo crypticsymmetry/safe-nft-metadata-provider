@@ -185,6 +185,7 @@ final class CollectionManager
                 $tokenId,
                 $uriPrefix1.'/'.$tokenId.'.'.$this->collectionFilesystemDriver->getAssetsExtension1()
             ),
+            ),
         );
     }
 
