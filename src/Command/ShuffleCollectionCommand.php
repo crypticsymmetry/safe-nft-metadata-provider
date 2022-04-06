@@ -118,4 +118,47 @@ class ShuffleCollectionCommand extends Command
 
         return Command::SUCCESS;
     }
+
+    protected function execute1(InputInterface $input, OutputInterface $output): int
+    {
+        $symfonyStyle = new SymfonyStyle($input, $output);
+        $minTokenIdOptionValue = $input->getOption(self::MIN_TOKEN_ID);
+        $minTokenId = is_numeric($minTokenIdOptionValue) ? (int) $minTokenIdOptionValue : 1;
+        $maxTokenIdOptionValue = $input->getOption(self::MAX_TOKEN_ID);
+        $maxTokenId = is_numeric(
+            $maxTokenIdOptionValue,
+        ) ? (int) $maxTokenIdOptionValue : $this->collectionManager->getMaxTokenId();
+
+        if (! $symfonyStyle->confirm(
+            "I'm about to generate a new shuffle mapping for your collection starting from token #".$minTokenId.' up to token #'.$maxTokenId.'. This will overwrite the previous shuffle mapping. Are you sure?',
+            false,
+        )) {
+            $symfonyStyle->warning('Aborting...');
+
+            return Command::SUCCESS;
+        }
+
+        $this->collectionManager->shuffle($minTokenId, $maxTokenId);
+
+        $symfonyStyle->info('The new shuffle mapping has been generated and added to the storage...');
+
+        // Clear app cache...
+        $symfonyStyle->info('Running "bin/console cache:clear"...');
+
+        $command = $this->getApplication()?->find('cache:clear');
+
+        if (! $command instanceof Command) {
+            throw new RuntimeException('Could not find the "cache:clear" command.');
+        }
+
+        $returnCode = $command->run(new ArrayInput([]), $output);
+
+        if (Command::SUCCESS !== $returnCode) {
+            throw new RuntimeException('An error occurred while clearing the cache.');
+        }
+
+        $symfonyStyle->success('New shuffle mapping generated successfully!');
+
+        return Command::SUCCESS;
+    }
 }

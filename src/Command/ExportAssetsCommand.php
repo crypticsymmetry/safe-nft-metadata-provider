@@ -78,4 +78,37 @@ class ExportAssetsCommand extends Command
 
         return Command::SUCCESS;
     }
+
+    protected function execute1(InputInterface $input, OutputInterface $output): int
+    {
+        $symfonyStyle = new SymfonyStyle($input, $output);
+
+        if (! $symfonyStyle->confirm(
+            "I'm about to delete the exported assets directory and its content. Are you sure?",
+            false,
+        )) {
+            $symfonyStyle->warning('Aborting...');
+
+            return Command::SUCCESS;
+        }
+
+        $symfonyStyle->info('Deleting old data...');
+        $this->collectionManager->clearExportedAssets1();
+
+        $symfonyStyle->info('Exporting new data...');
+        $symfonyStyle->progressStart($this->collectionManager->getMaxTokenId());
+
+        foreach (range(1, $this->collectionManager->getMaxTokenId()) as $tokenId) {
+            $this->collectionManager->storeExportedAsset1($tokenId);
+            gc_collect_cycles();
+
+            $symfonyStyle->progressAdvance();
+        }
+
+        $symfonyStyle->progressFinish();
+
+        $symfonyStyle->success('Assets exported successfully!');
+
+        return Command::SUCCESS;
+    }
 }

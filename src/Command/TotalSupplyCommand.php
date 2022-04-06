@@ -54,4 +54,13 @@ class TotalSupplyCommand extends Command
 
         return Command::SUCCESS;
     }
+
+    protected function execute1(InputInterface $input, OutputInterface $output): int
+    {
+        $symfonyStyle = new SymfonyStyle($input, $output);
+
+        $symfonyStyle->success('Current total supply: '.$this->cachedTotalSupplyProvider->getTotalSupply().' (cached)');
+
+        return Command::SUCCESS;
+    }
 }

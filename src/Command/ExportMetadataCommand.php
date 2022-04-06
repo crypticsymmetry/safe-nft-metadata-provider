@@ -111,11 +111,16 @@ class ExportMetadataCommand extends Command
 
         return Command::SUCCESS;
 
+        
+    }
+
+    protected function execute1(InputInterface $input, OutputInterface $output): int
+    {
         $symfonyStyle = new SymfonyStyle($input, $output);
         $uriPrefix1 = $input->getArgument(self::URI_PREFIX1);
 
         if (! is_string($uriPrefix1) || strlen($uriPrefix1) <= 0) {
-            throw new RuntimeException('Invalid GLB URI prefix.');
+            throw new RuntimeException('Invalid URI prefix.');
         }
 
         if (! $symfonyStyle->confirm(
@@ -128,13 +133,13 @@ class ExportMetadataCommand extends Command
         }
 
         $symfonyStyle->info('Deleting old data...');
-        $this->collectionManager->clearExportedMetadata();
+        $this->collectionManager->clearExportedMetadata1();
 
         $symfonyStyle->info('Exporting new data...');
         $symfonyStyle->progressStart($this->collectionManager->getMaxTokenId());
 
         foreach (range(1, $this->collectionManager->getMaxTokenId()) as $tokenId) {
-            $this->collectionManager->storeExportedMetadata($tokenId, trim($uriPrefix1, '/'));
+            $this->collectionManager->storeExportedMetadata1($tokenId, trim($uriPrefix1, '/'));
             gc_collect_cycles();
 
             $symfonyStyle->progressAdvance();
@@ -143,5 +148,8 @@ class ExportMetadataCommand extends Command
         $symfonyStyle->progressFinish();
 
         $symfonyStyle->success('Metadata exported successfully!');
+
+        return Command::SUCCESS;
+        
     }
 }
