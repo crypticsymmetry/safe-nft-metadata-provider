@@ -89,14 +89,15 @@ final class CollectionManager
                         '_format' => $this->collectionFilesystemDriver->getAssetsExtension(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL,
-                $assetUri1 ?? $this->urlGenerator->generate(
-                    RouteName::GET_GLB_ASSET,
-                    [
-                        'tokenId' => $tokenId,
-                        '_format' => $this->collectionFilesystemDriver->getAssetsExtension(),
-                    ],
-                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ),
+                    $assetUri1 ?? $this->urlGenerator->generate(
+                        RouteName::GET_GLB_ASSET,
+                        [
+                            'tokenId' => $tokenId,
+                            '_format' => $this->collectionFilesystemDriver->getAssetsExtension(),
+                        ],
+                        UrlGeneratorInterface::ABSOLUTE_URL,
+                    ),
             );
         }
         return $metadata;
