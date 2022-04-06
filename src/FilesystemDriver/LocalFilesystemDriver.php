@@ -193,4 +193,12 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
             $this->localCollectionPath.self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
     }
+
+    public function storeExportedAsset1(int $sourceTokenId, int $targetTokenId): void
+    {
+        FileSystem::copy(
+            $this->localCollectionPath.self::GLB_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension1,
+            $this->localCollectionPath.self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
+        );
+    }
 }
