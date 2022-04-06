@@ -90,6 +90,15 @@ final class CollectionManager
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL,
                 ),
+                    $assetUri1 ?? $this->urlGenerator->generate(
+                        RouteName::GET_GLB_ASSET,
+                        [
+                            'tokenId' => $tokenId,
+                            '_format' => $this->collectionFilesystemDriver->getAssetsExtension1(),
+                        ],
+                        UrlGeneratorInterface::ABSOLUTE_URL,
+                    ),
+                ),
             );
         }
         return $metadata;
@@ -122,7 +131,9 @@ final class CollectionManager
             );
         return $metadata;
     }
-    
+    /**
+     * @return array<string, mixed>
+     */
     public function getAssetResponse1(int $tokenId): Response
     {
         return $this->collectionFilesystemDriver->getAssetResponse1($this->getMappedTokenId($tokenId));
