@@ -191,6 +191,11 @@ final class CollectionManager
         $this->collectionFilesystemDriver->storeExportedAsset($this->getMappedTokenId($tokenId), $tokenId);
     }
 
+    public function storeExportedAsset1(int $tokenId): void
+    {
+        $this->collectionFilesystemDriver->storeExportedAsset1($this->getMappedTokenId($tokenId), $tokenId);
+    }
+
     private function getMappedTokenId(int $tokenId): int
     {
         $shuffleMapping = $this->getShuffleMapping();
