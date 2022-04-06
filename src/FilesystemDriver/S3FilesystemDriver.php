@@ -116,7 +116,7 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
 
     public function getAssetResponse1(int $tokenId): Response
     {
-        $object = $this->getObject(self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1);
+        $object = $this->getObject1(self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1);
         $response = new Response(
             $object->contents,
             200,
@@ -236,10 +236,10 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
             self::EXPORTED_IMG_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
         );
     }
-
+    
     public function storeExportedAsset1(int $sourceTokenId, int $targetTokenId): void
     {
-        $this->copyObject(
+        $this->copyObject1(
             self::GLB_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension1,
             self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
@@ -247,6 +247,24 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
     private function getObject(string $relativePath): FileObject
     {
         $result = $this->s3Client->getObject($this->generateArgs($relativePath));
+
+        $body = $result['Body'];
+        $contentType = $result['ContentType'];
+
+        if (! $body instanceof Stream) {
+            throw new LogicException('Unexpected "Body"" type, it should be a "GuzzleHttp\Psr7\Stream".');
+        }
+
+        if (! is_string($contentType)) {
+            throw new LogicException('Unexpected "ContentType" type, it should be a string.');
+        }
+
+        return new FileObject($contentType, $body->getContents());
+    }
+
+    private function getObject1(string $relativePath): FileObject
+    {
+        $result = $this->s3Client->getObject1($this->generateArgs($relativePath));
 
         $body = $result['Body'];
         $contentType = $result['ContentType'];
