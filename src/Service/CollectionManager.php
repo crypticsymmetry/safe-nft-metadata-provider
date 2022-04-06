@@ -74,7 +74,7 @@ final class CollectionManager
     /**
      * @return array<string, mixed>
      */
-    public function getMetadata(int $tokenId, string $assetUri = null, string $assetUri1 = null): array
+    public function getMetadata(int $tokenId, string $assetUri = null): array
     {
         $metadata = $this->collectionFilesystemDriver->getMetadata($this->getMappedTokenId($tokenId));
 
@@ -84,20 +84,13 @@ final class CollectionManager
                 $tokenId,
                 $assetUri ?? $this->urlGenerator->generate(
                     RouteName::GET_IMG_ASSET,
+                    $assetUri1 ?? $this->urlGenerator->generate(
+                        RouteName::GET_GLB_ASSET,
                     [
                         'tokenId' => $tokenId,
                         '_format' => $this->collectionFilesystemDriver->getAssetsExtension(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL,
-                    ),
-                    $assetUri1 ?? $this->urlGenerator->generate(
-                        RouteName::GET_GLB_ASSET,
-                        [
-                            'tokenId' => $tokenId,
-                            '_format' => $this->collectionFilesystemDriver->getAssetsExtension1(),
-                        ],
-                        UrlGeneratorInterface::ABSOLUTE_URL,
-                    ),
                 ),
             );
         }
@@ -109,9 +102,6 @@ final class CollectionManager
         return $this->collectionFilesystemDriver->getAssetResponse($this->getMappedTokenId($tokenId));
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function getAssetResponse1(int $tokenId): Response
     {
         return $this->collectionFilesystemDriver->getAssetResponse1($this->getMappedTokenId($tokenId));
