@@ -92,7 +92,6 @@ final class CollectionManager
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL,
                 ),
-            );
         }
         return $metadata;
     }
