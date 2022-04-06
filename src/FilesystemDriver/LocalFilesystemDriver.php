@@ -189,8 +189,6 @@ final class LocalFilesystemDriver implements CollectionFilesystemDriverInterface
         FileSystem::copy(
             $this->localCollectionPath.self::IMG_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension,
             $this->localCollectionPath.self::EXPORTED_IMG_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension,
-            $this->localCollectionPath.self::GLB_ASSETS_PATH.'/'.$sourceTokenId.'.'.$this->assetsExtension1,
-            $this->localCollectionPath.self::EXPORTED_GLB_ASSETS_PATH.'/'.$targetTokenId.'.'.$this->assetsExtension1,
         );
     }
 
