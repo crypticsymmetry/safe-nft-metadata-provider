@@ -110,10 +110,7 @@ class ExportMetadataCommand extends Command
         $symfonyStyle->success('Metadata exported successfully!');
 
         return Command::SUCCESS;
-    }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
         $symfonyStyle = new SymfonyStyle($input, $output);
         $uriPrefix1 = $input->getArgument(self::URI_PREFIX1);
 
@@ -146,7 +143,5 @@ class ExportMetadataCommand extends Command
         $symfonyStyle->progressFinish();
 
         $symfonyStyle->success('Metadata exported successfully!');
-
-        return Command::SUCCESS;
     }
 }
