@@ -116,12 +116,12 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
 
     public function getAssetResponse1(int $tokenId): Response
     {
-        $object = $this->getObject1(self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1);
+        $object1 = $this->getObject1(self::GLB_ASSETS_PATH.'/'.$tokenId.'.'.$this->assetsExtension1);
         $response = new Response(
-            $object->contents,
+            $object1->contents,
             200,
             [
-                'Content-Type' => $object->contentType,
+                'Content-Type' => $object1->contentType,
             ],
         );
         $disposition = HeaderUtils::makeDisposition(
@@ -296,6 +296,15 @@ final class S3FilesystemDriver implements CollectionFilesystemDriverInterface
         $args['CopySource'] = $this->bucketName.'/'.$this->generateAbsolutePath($sourceRelativePath);
 
         $this->s3Client->copyObject($args);
+    }
+
+    private function copyObject1(string $sourceRelativePath, string $targetRelativePath): void
+    {
+        $args = $this->generateArgs($targetRelativePath);
+
+        $args['CopySource'] = $this->bucketName.'/'.$this->generateAbsolutePath($sourceRelativePath);
+
+        $this->s3Client->copyObject1($args);
     }
 
     /**
