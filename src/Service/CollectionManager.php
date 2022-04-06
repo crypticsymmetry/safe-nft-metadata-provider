@@ -96,7 +96,8 @@ final class CollectionManager
                         '_format' => $this->collectionFilesystemDriver->getAssetsExtension(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL,
-                );
+                ),
+            );
         }
         return $metadata;
     }
