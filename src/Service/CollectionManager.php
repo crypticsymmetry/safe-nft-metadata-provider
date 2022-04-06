@@ -181,7 +181,9 @@ final class CollectionManager
             $this->getMetadata(
                 $tokenId,
                 $uriPrefix.'/'.$tokenId.'.'.$this->collectionFilesystemDriver->getAssetsExtension(),
-                $uriPrefix1.'/'.$tokenId.'.'.$this->collectionFilesystemDriver->getAssetsExtension1(),
+            $this->getMetadata(
+                $tokenId,
+                $uriPrefix1.'/'.$tokenId.'.'.$this->collectionFilesystemDriver->getAssetsExtension1()
             ),
         );
     }
